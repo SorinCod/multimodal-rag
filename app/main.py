@@ -70,8 +70,15 @@ def process_uploaded_file(uploaded_file) -> dict:
             else:
                 add_to_queue(table, source_file=uploaded_file.name, item_type="table")
                 summary["tables_queued"] += 1
-    except Exception:
-        pass  # scanned PDFs have no table structure Camelot can read
+    except Exception as e:
+        # Table extraction can legitimately fail on scanned PDFs (no
+        # underlying text/vector structure for Camelot to read), but it
+        # can also fail due to real misconfiguration (e.g. Ghostscript
+        # missing) or a corrupted file. We don't want to crash the whole
+        # upload for either case, but we do want the failure to be visible
+        # instead of silently swallowed.
+        print(f"[WARNING] Table extraction failed for {uploaded_file.name}: {e}")
+        st.warning(f"Table extraction skipped for this file: {e}")
 
     pages_with_tables = {t["page"] for t in validated_tables}
 
