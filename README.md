@@ -104,7 +104,3 @@ data/                # Runtime data (uploaded files, vector DB) — not committe
 - **No persistence across restarts in some deployment environments** — the vector store and review queue are stored on local disk; on ephemeral hosting, they reset on restart.
 - **Cold-start latency** — OCR and embedding models load on first use (a few seconds), then stay cached for the session via `@st.cache_resource`.
 - **CPU-only inference** — no GPU acceleration; adequate for demo-scale usage, not high-throughput production.
-
-## License
-
-MIT
